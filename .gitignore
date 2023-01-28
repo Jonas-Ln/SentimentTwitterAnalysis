@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Ignore redis binary dump (dump.rdb) files
+
+*.rdb
+
+# Ignore Csv
+
+*.csv
