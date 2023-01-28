@@ -15,18 +15,51 @@
 
 # Format ISO-8859-1 ANSI delimiter ','
 import pandas as pd
-
+import re
+from autocorrect import Speller(lang='en')
+import nltk #NaturalLanguageToolKit
+nltk.download('punkt')
+nltk.download('wordnet')
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+lemmatize = WordNetLemmatizer()
 
 # Load Data:
 DATA_PATH = '/Users/jonaslenz/pythonProject/SentimentTwitterAnalysis/Training_Data/training_1600000_processed_noemoticon.csv'
 
-class twitter_text_for_Nlp():
+# Text Preprocessing as Class
+# first option 1 Hot Embedding but too many Dimensions
+# second option TF-IDF representation
 
-    def remove_regex(self):
+class NLP_Transformer:
+    def __init__(self,text):
+        self.text = text
+
+    #reduce length of long written words (not easy to interpret)
+    def reduce_wordlength(self):
+        return re.compile(r'(.)\1{2,}').sub(r'\1\1',self)
+
+    def Preprocessing(self):
+        self.lower()
+        #Regex Replace extra signs @ # etc.
+        self.re.sub(r'#[A-Za-z0-9_]+','')
+        self.re.sub(r'@[A-Za-z0-9_]+','')
+        #Remove Links
+        self.re.sub(r'')
+
+
         self.remove_regex()
         self.remove_regex()
         self.remove_regex()
         self.remove_regex()
+
+    def tokenizing(self):
+
+    def lemmatize(self):
+
+    def
+
+
 
 
 def load_transform_df ():
@@ -34,7 +67,6 @@ def load_transform_df ():
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
     #Nur relevante Spalten: y zu vorhersagende Variable = Sentiment, x Predictor = text
     df_for_Sentiment = df[['Sentiment', 'text']]
-
     return df_for_Sentiment
 
 def transform_text_for_nlp
