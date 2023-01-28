@@ -23,8 +23,10 @@ DATA_PATH = '/Users/jonaslenz/pythonProject/SentimentTwitterAnalysis/Training_Da
 class twitter_text_for_Nlp():
 
     def remove_regex(self):
-        self.
-
+        self.remove_regex()
+        self.remove_regex()
+        self.remove_regex()
+        self.remove_regex()
 
 
 def load_transform_df ():
