@@ -16,6 +16,7 @@
 # Format ISO-8859-1 ANSI delimiter ','
 import pandas as pd
 import re
+import collections
 from autocorrect import Speller
 spell = Speller(lang='en')
 import nltk #NaturalLanguageToolKit
@@ -25,7 +26,11 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk import FreqDist
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, PrecisionRecallDisplay,RocCurveDisplay
+import matplotlib.pyplot as plt
 from nltk.classify import NaiveBayesClassifier,accuracy
+from nltk.metrics.scores import (f_measure,precision,recall)
 import tqdm
 lemma = WordNetLemmatizer()
 
@@ -46,10 +51,8 @@ class NLP_Transformer:
         # 5 remove numbers
         # 6 remove Sonderzeichen except . ! ?
         regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
-
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
-            #print(self.text.lower())
         return self.text.lower()
 
     def word_to_stem(self: str) -> str:
@@ -96,32 +99,55 @@ def text_preprocessing(x):
 
 def feature_data(x, y):
     words = [text_preprocessing(row) for row in x]
-    feature_data = list(zip(words, y))
-    return feature_data, words
+    y = list(y)
+    return words, y
 
 def export_features(most_words,features):
-    dict = {}
-    for word in most_words:
-        dict['contains({})'.format(word)] = (word in set(features))
-    return dict
+    feature_array = []
+    for i in range(0,len(most_words)):
+        feature_array.append(1 if most_words[i] in features else 0)
+    return feature_array
 
 def main():
     x_train, x_test, y_train, y_test  = load_transform_df()
 
-    train, single_words_train = feature_data(x_train, y_train)
-    test, _ = feature_data(x_test, y_test)
-    feature_extract = FreqDist(sum([word for word in single_words_train], []))
+    x_train_new, y_train = feature_data(x_train, y_train)
+    x_test_new, y_test = feature_data(x_test, y_test)
+    feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
-    most_used_words = list(feature_extract)[:400]
+    print(len(feature_extract))
+    most_used_words = list(feature_extract)[:10000]
+    #df_muw = pd.DataFrame(, columns= most_used_words)
 
-    train_set = [(export_features(most_used_words, data),y) for (data,y) in train]
-    test_set = [(export_features(most_used_words, data),y) for (data,y) in test]
+    x_train_feature = [(export_features(most_used_words, data)) for data in x_train_new]
+    x_test_feature = [(export_features(most_used_words, data)) for data in x_test_new]
 
-    #Model
-    nb_classifier = NaiveBayesClassifier.train(train_set)
 
-    print(accuracy(nb_classifier,test_set))
+    # Export test and train Data
 
+    #Model for test
+    model = MultinomialNB()
+    model.fit(x_train_feature,y_train)
+
+    y_pred = model.predict(x_test_feature)
+    y_pred_proba = model.predict_proba(x_test_feature)
+    #y_dec = model.decision_function(x_test_feature)
+    print(y_pred)
+    print(y_pred_proba)
+    #decision_function
+    print(accuracy_score(y_pred,y_test))
+    print(precision_score(y_pred, y_test, average="macro"))
+    print(recall_score(y_pred, y_test, average="macro"))
+    print(f1_score(y_pred, y_test, average="macro"))
+
+    PrecisionRecallDisplay.from_predictions(y_test, y_pred_proba[:, 1],color="darkorange").plot()
+    RocCurveDisplay.from_predictions(y_test,y_pred_proba[:, 1],color="darkorange",)
+    plt.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
+    plt.axis("square")
+    plt.show()
+
+
+    #print(precision_recall_fscore_support(test_set, nb_classifier, average='weighted'))
 
 if __name__ == "__main__":
     main()
