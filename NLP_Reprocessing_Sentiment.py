@@ -114,7 +114,7 @@ class Neural_Network:
         return np.exp(Z) / np.sum(np.exp(Z))
 
     def initialize_parameters(self):
-        W1 = np.random.rand(2, 100) - 0.5
+        W1 = np.random.rand(2, 3000) - 0.5
         b1 = np.random.rand(2, 1) - 0.5
         W2 = np.random.rand(2, 2) - 0.5
         b2 = np.random.rand(2, 1) - 0.5
@@ -142,12 +142,21 @@ class Neural_Network:
 
     def get_prediction(self, A2):
         return np.argmax(A2, 0)
+    def get_prediction_prob(self, A2):
+        return np.softmax(A2, 0)
 
     def get_accuracy(self, prediction, Y):
         print(prediction, Y)
         print(prediction.size, Y.size)
         return np.sum(prediction == Y) / Y.size
 
+    def make_a_prediction(self, X, W1, b1, W2, b2):
+        _,_,_, A2 = self.forward_propagation(W1,b1,W2,b2,X)
+        predictions = self.get_prediction(A2)
+        return predictions
+    '''
+    def test_prediction(self, index, W1, b1, W2, b2):
+        datensatz = X_train[:, index, None]'''
 
 def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
@@ -196,14 +205,22 @@ def main():
 
     x_train_feature = [(export_features(most_used_words, data)) for data in x_train_new]
     x_test_feature = [(export_features(most_used_words, data)) for data in x_test_new]
-    x_array_NN = np.array(x_train_feature)
-    y_array_NN = np.array(y_train)
+
+    x_train_NN = np.array(x_train_feature).T
+    y_train_NN = np.array(y_train)
+
+    x_test_NN = np.array(x_test_feature).T
+    y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_array_NN.T, y_array_NN, 10000, 0.1)
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.1)
 
+    # Test Prediction:
+    predictions = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
 
+    accuracy = Neural_Network().get_accuracy(predictions, y_test_NN)
 
+    print(accuracy)
     # Export test and train Data
 '''
     #Model for test
