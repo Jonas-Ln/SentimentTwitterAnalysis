@@ -23,6 +23,10 @@ import nltk #NaturalLanguageToolKit
 #nltk.download('wordnet')
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk import FreqDist
+from sklearn.model_selection import train_test_split
+from nltk.classify import NaiveBayesClassifier,accuracy
+import tqdm
 lemma = WordNetLemmatizer()
 
 # Load Data:
@@ -63,78 +67,60 @@ class NLP_Transformer:
                 word = lemma.lemmatize(word)
                 tweet.append(word)
                 # join together for output
-        output = output.join(tweet)
+        #output = output.join(tweet)
 
-        return output
-
-
-
-        '''
-        #Regex Replace extra signs @ # etc.
-        re.sub(r'#[A-Za-z0-9_]+','',self.text)
-        re.sub(r'@[A-Za-z0-9_]+','',self.text)
-        #Remove Links
-        re.sub(r'http\S+','',self.text)
-        re.sub(r'www. \S+','',self.text)
-        # remove numbers
-        re.sub(r'[0-9]','',self.text)
-        #remove Sonderzeichen except . ! ?
-        re.sub(r'/[^A-Za-z0-9\!\?\.]/','',self.text)
-
-    def tokenizing(self):
-
-    def lemmatize(self):
-
-    def
-    '''
-
+        return tweet
 
 
 def load_transform_df ():
-    df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1', nrows=10)
+    df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
+    df = df[['Sentiment','text']].sample(n=100000, random_state=0)
     # Change Sentiment 0 negative and 1 Positive
-    df['Sentiment'] = df['Sentiment'].replace(4,1)
-    #Nur relevante Spalten: y zu vorhersagende Variable = Sentiment, x Predictor = text
-    df_for_Sentiment = df[['Sentiment', 'text']]
-    #print(df_for_Sentiment)
-    return df_for_Sentiment
+    x = df.text.values
+    y = df.Sentiment.replace(4,1)
+    # Split
+    x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=0)
 
-def feature_dataset(x, y):
-    words = [row.split(' ') for row in x]
-    return words
+    return x_train, x_test, y_train, y_test
 
-
-def main():
-    df = load_transform_df()
-    count = 0
+def text_preprocessing(x):
     # NLP - Textnormalisierung
-    for row in df['text']:
         # Initialize as Class
         # regex Sonderzeichen
-        text = NLP_Transformer(row).regex_replace_tweet()
+    text = NLP_Transformer(x).regex_replace_tweet()
         # tokens aus text # Long word Autocorrect, Lemmatize
-        text = NLP_Transformer(text).word_to_stem()
-        df.at[count,'text'] = text
-        count += 1
+    text = NLP_Transformer(text).word_to_stem()
+    return text
 
+def feature_data(x, y):
+    words = [text_preprocessing(row) for row in x]
+    feature_data = list(zip(words, y))
+    return feature_data, words
 
-    # Extract Features from Dataset
-    df_features = feature_dataset(df['text'], df['Sentiment'])
+def export_features(most_words,features):
+    dict = {}
+    for word in most_words:
+        dict['contains({})'.format(word)] = (word in set(features))
+    return dict
 
+def main():
+    x_train, x_test, y_train, y_test  = load_transform_df()
 
+    train, single_words_train = feature_data(x_train, y_train)
+    test, _ = feature_data(x_test, y_test)
+    feature_extract = FreqDist(sum([word for word in single_words_train], []))
+    #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
+    most_used_words = list(feature_extract)[:400]
 
-    #Test Training Data
-    print(df)
+    train_set = [(export_features(most_used_words, data),y) for (data,y) in train]
+    test_set = [(export_features(most_used_words, data),y) for (data,y) in test]
 
+    #Model
+    nb_classifier = NaiveBayesClassifier.train(train_set)
 
-
-
-
-
-
-
+    print(accuracy(nb_classifier,test_set))
 
 
 if __name__ == "__main__":
