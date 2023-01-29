@@ -75,11 +75,85 @@ class NLP_Transformer:
         return tweet
 
 
+import numpy as np
+
+
+# Input of x_train and test_data
+class Neural_Network:
+    def __init__(self):
+        np.random.seed(2)
+
+
+    def forward_propagation(self, W1, b1, W2, b2, X):
+        Z1 = W1.dot(X) + b1
+        A1 = self.ReLU(Z1)
+        Z2 = W2.dot(A1) + b2
+        A2 = self.softmax(Z2)
+        return Z1, A1, Z2, A2
+
+    def back_propagation(self, Z1, A1, Z2, A2, W1, W2, X, Y):
+        m = Y.size
+        y_trans = Y.T
+        #encode_y = np.zeros((Y.size, Y.max()+1))
+        #enocde_y[np.arange(Y.size),Y] = 1
+        dZ2 = A2 - y_trans
+        dW2 = 1 / m * dZ2.dot(A1.T)
+        db2 = 1 / m * np.sum(dZ2)
+        dZ1 = W2.T.dot(dZ2) * self.derivative_ReLU(Z1)
+        dW1 = 1 / m * dZ1.dot(X.T)
+        db1 = 1 / m * np.sum(dZ1)
+        return dW1, db1, dW2, db2
+
+    def derivative_ReLU(self, Z):
+        return Z > 0
+
+    def ReLU(self, Z):
+        return np.maximum(0, Z)
+
+    def softmax(self, Z):
+        return np.exp(Z) / np.sum(np.exp(Z))
+
+    def initialize_parameters(self):
+        W1 = np.random.rand(2, 100) - 0.5
+        b1 = np.random.rand(2, 1) - 0.5
+        W2 = np.random.rand(2, 2) - 0.5
+        b2 = np.random.rand(2, 1) - 0.5
+        #print(W1, b1, W2, b2)
+        return W1, b1, W2, b2
+
+    def update_parameters(self, W1, b1, W2, b2, dW1, db1, dW2, db2, alpha):
+        W1 = W1 - alpha * dW1
+        b1 = b1 - alpha * db1
+        W2 = W2 - alpha * dW2
+        b2 = b2 - alpha * db2
+
+        return W1, b1, W2, b2
+
+    def gradient_descent(self, X, Y, iterations, alpha):
+        W1, b1, W2, b2 = self.initialize_parameters()
+        for i in range(iterations):
+            Z1, A1, Z2, A2 = self.forward_propagation(W1, b1, W2, b2, X)
+            dW1, db1, dW2, db2 = self.back_propagation(Z1, A1, Z2, A2,W1, W2, X, Y)
+            W1, b1, W2, b2 = self.update_parameters(W1, b1, W2, b2, dW1, db1, dW2, db2, alpha)
+            if i % 10 == 0:
+                print("Iteration: ", i)
+                print("Accuracy ", self.get_accuracy(self.get_prediction(A2), Y))
+        return W1, b1, W2, b2
+
+    def get_prediction(self, A2):
+        return np.argmax(A2, 0)
+
+    def get_accuracy(self, prediction, Y):
+        print(prediction, Y)
+        print(prediction.size, Y.size)
+        return np.sum(prediction == Y) / Y.size
+
+
 def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
-    df = df[['Sentiment','text']].sample(n=100000, random_state=0)
+    df = df[['Sentiment','text']].sample(n=10000, random_state=0)
     # Change Sentiment 0 negative and 1 Positive
     x = df.text.values
     y = df.Sentiment.replace(4,1)
@@ -116,15 +190,22 @@ def main():
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
     print(len(feature_extract))
-    most_used_words = list(feature_extract)[:10000]
+    most_used_words = list(feature_extract)[:3000]
     #df_muw = pd.DataFrame(, columns= most_used_words)
+
 
     x_train_feature = [(export_features(most_used_words, data)) for data in x_train_new]
     x_test_feature = [(export_features(most_used_words, data)) for data in x_test_new]
+    x_array_NN = np.array(x_train_feature)
+    y_array_NN = np.array(y_train)
+
+
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_array_NN.T, y_array_NN, 10000, 0.1)
+
 
 
     # Export test and train Data
-
+'''
     #Model for test
     model = MultinomialNB()
     model.fit(x_train_feature,y_train)
@@ -145,7 +226,7 @@ def main():
     plt.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
     plt.axis("square")
     plt.show()
-
+'''
 
     #print(precision_recall_fscore_support(test_set, nb_classifier, average='weighted'))
 
