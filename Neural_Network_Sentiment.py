@@ -41,7 +41,7 @@ class NLP_Transformer:
         # 3-4 Remove Links
         # 5 remove numbers
         # 6 remove Sonderzeichen except . ! ?
-        regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'"]
+        regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
 
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
@@ -101,17 +101,37 @@ def load_transform_df ():
     #print(df_for_Sentiment)
     return df_for_Sentiment
 
+def feature_dataset(x, y):
+    words = [row.split(' ') for row in x]
+    return words
+
 
 def main():
     df = load_transform_df()
-    tweet = []
+    count = 0
+    # NLP - Textnormalisierung
     for row in df['text']:
         # Initialize as Class
         # regex Sonderzeichen
         text = NLP_Transformer(row).regex_replace_tweet()
         # tokens aus text # Long word Autocorrect, Lemmatize
         text = NLP_Transformer(text).word_to_stem()
-        print(text)
+        df.at[count,'text'] = text
+        count += 1
+
+
+    # Extract Features from Dataset
+    df_features = feature_dataset(df['text'], df['Sentiment'])
+
+
+
+    #Test Training Data
+    print(df)
+
+
+
+
+
 
 
 
