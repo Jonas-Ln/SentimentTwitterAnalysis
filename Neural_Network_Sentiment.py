@@ -16,13 +16,14 @@
 # Format ISO-8859-1 ANSI delimiter ','
 import pandas as pd
 import re
-from autocorrect import Speller(lang='en')
+from autocorrect import Speller
+spell = Speller(lang='en')
 import nltk #NaturalLanguageToolKit
-nltk.download('punkt')
-nltk.download('wordnet')
+#nltk.download('punkt')
+#nltk.download('wordnet')
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-lemmatize = WordNetLemmatizer()
+lemma = WordNetLemmatizer()
 
 # Load Data:
 DATA_PATH = '/Users/jonaslenz/pythonProject/SentimentTwitterAnalysis/Training_Data/training_1600000_processed_noemoticon.csv'
@@ -32,52 +33,88 @@ DATA_PATH = '/Users/jonaslenz/pythonProject/SentimentTwitterAnalysis/Training_Da
 # second option TF-IDF representation
 
 class NLP_Transformer:
-    def __init__(self,text):
+    def __init__(self, text):
         self.text = text
 
-    #reduce length of long written words (not easy to interpret)
-    def reduce_wordlength(self):
-        return re.compile(r'(.)\1{2,}').sub(r'\1\1',self)
+    def regex_replace_tweet(self: str) -> str:
+        # 1-2 Regex Replace extra signs @ # etc.
+        # 3-4 Remove Links
+        # 5 remove numbers
+        # 6 remove Sonderzeichen except . ! ?
+        regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'"]
 
-    def Preprocessing(self):
-        self.lower()
+        for regex in regex_list:
+            self.text = re.sub(regex,'',self.text)
+            #print(self.text.lower())
+        return self.text.lower()
+
+    def word_to_stem(self: str) -> str:
+        # split into words
+        self.text = word_tokenize(self.text)
+        tweet = []
+        output = ' '
+        for word in self.text:
+            if len(word) > 2:
+                # Reduce length of long written words (not easy to interpret)
+                _ = re.compile(r'(.)\1{2,}')
+                word = _.sub(r'\1\1', word)
+                word = spell(word)
+                # get word stem
+                word = lemma.lemmatize(word)
+                tweet.append(word)
+                # join together for output
+        output = output.join(tweet)
+
+        return output
+
+
+
+        '''
         #Regex Replace extra signs @ # etc.
-        self.re.sub(r'#[A-Za-z0-9_]+','')
-        self.re.sub(r'@[A-Za-z0-9_]+','')
+        re.sub(r'#[A-Za-z0-9_]+','',self.text)
+        re.sub(r'@[A-Za-z0-9_]+','',self.text)
         #Remove Links
-        self.re.sub(r'')
-
-
-        self.remove_regex()
-        self.remove_regex()
-        self.remove_regex()
-        self.remove_regex()
+        re.sub(r'http\S+','',self.text)
+        re.sub(r'www. \S+','',self.text)
+        # remove numbers
+        re.sub(r'[0-9]','',self.text)
+        #remove Sonderzeichen except . ! ?
+        re.sub(r'/[^A-Za-z0-9\!\?\.]/','',self.text)
 
     def tokenizing(self):
 
     def lemmatize(self):
 
     def
-
+    '''
 
 
 
 def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1', nrows=10)
+
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
+    # Change Sentiment 0 negative and 1 Positive
+    df['Sentiment'] = df['Sentiment'].replace(4,1)
     #Nur relevante Spalten: y zu vorhersagende Variable = Sentiment, x Predictor = text
     df_for_Sentiment = df[['Sentiment', 'text']]
+    #print(df_for_Sentiment)
     return df_for_Sentiment
-
-def transform_text_for_nlp
-
-
-    print(df.head(5))
-
 
 
 def main():
-    load_transform_df()
+    df = load_transform_df()
+    tweet = []
+    for row in df['text']:
+        # Initialize as Class
+        # regex Sonderzeichen
+        text = NLP_Transformer(row).regex_replace_tweet()
+        # tokens aus text # Long word Autocorrect, Lemmatize
+        text = NLP_Transformer(text).word_to_stem()
+        print(text)
+
+
+
 
 
 if __name__ == "__main__":
