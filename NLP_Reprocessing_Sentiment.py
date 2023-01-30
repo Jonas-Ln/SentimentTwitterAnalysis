@@ -53,6 +53,7 @@ class NLP_Transformer:
         regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
+
         return self.text.lower()
 
     def word_to_stem(self: str) -> str:
@@ -68,7 +69,8 @@ class NLP_Transformer:
                 word = spell(word)
                 # get word stem
                 word = lemma.lemmatize(word)
-                tweet.append(word)
+                if (len(word) > 2 or word == '..') and word not in ['the','and']:
+                    tweet.append(word)
                 # join together for output
         #output = output.join(tweet)
 
@@ -98,7 +100,7 @@ class Neural_Network:
         one_h_endoding[Y, np.arange(m)] = 1
         #encode_y = np.zeros((Y.size, Y.max()+1))
         #enocde_y[np.arange(Y.size),Y] = 1
-        dZ2 = 2*(A2 - one_h_endoding)
+        dZ2 = 2 * (A2 - one_h_endoding)
         dW2 = 1 / m * dZ2.dot(A1.T)
         db2 = 1 / m * np.sum(dZ2,1)
         dZ1 = W2.T.dot(dZ2) * self.derivative_ReLU(Z1)
@@ -117,10 +119,10 @@ class Neural_Network:
         return exp / exp.sum(axis=0)
 
     def initialize_parameters(self):
-        W1 = np.random.rand(10, 500) - 0.5
-        b1 = np.random.rand(10, 1) - 0.5
-        W2 = np.random.rand(2, 10) - 0.5
-        b2 = np.random.rand(2, 1) - 0.5
+        W1 = np.random.normal(size = (10, 2000)) * np.sqrt(1./2000)
+        b1 = np.random.normal(size = (10, 1)) * np.sqrt(1./10)
+        W2 = np.random.normal(size = (2, 10)) * np.sqrt(1./12)
+        b2 = np.random.normal(size = (2, 1)) * np.sqrt(1./2000)
         #print(W1, b1, W2, b2)
         return W1, b1, W2, b2
 
@@ -142,7 +144,8 @@ class Neural_Network:
             if i % 10 == 0:
                 print("Iteration: ", i)
                 print("Accuracy ", self.get_accuracy(self.get_prediction(A2), Y))
-                print("probability ", A2)
+                print(self.get_prediction(A2), Y)
+
         return W1, b1, W2, b2
 
     def get_prediction(self, A2):
@@ -150,14 +153,12 @@ class Neural_Network:
 
 
     def get_accuracy(self, prediction, Y):
-        print(prediction, Y)
-        print(prediction.size, Y.size)
         return np.sum(prediction == Y) / Y.size
 
     def make_a_prediction(self, X, W1, b1, W2, b2):
         _,_,_, A2 = self.forward_propagation(W1,b1,W2,b2,X)
         predictions = self.get_prediction(A2)
-        return predictions
+        return predictions, self.softmax(A2)
     '''
     def test_prediction(self, index, W1, b1, W2, b2):
         datensatz = X_train[:, index, None]'''
@@ -166,7 +167,7 @@ def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
-    df = df[['Sentiment','text']].sample(n=100000, random_state=0)
+    df = df[['Sentiment','text']].sample(n=6000, random_state=0)
 
 # Wenn daten ungleich gebalanced evtl aufslpitten zu 50/50:
     #df_neg = df[df['Sentiment']== 0].sample(n=50, random_state=0)
@@ -208,10 +209,10 @@ def main():
     x_test_new, y_test = feature_data(x_test, y_test)
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
-    print(len(feature_extract))
-    most_used_words = list(feature_extract)[:500]
-    #df_muw = pd.DataFrame(, columns= most_used_words)
 
+    most_used_words = list(feature_extract)[:2000]
+    #df_muw = pd.DataFrame(, columns= most_used_words)
+    print(most_used_words)
 
     x_train_feature = [(export_features(most_used_words, data)) for data in x_train_new]
     x_test_feature = [(export_features(most_used_words, data)) for data in x_test_new]
@@ -223,15 +224,31 @@ def main():
     y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.1)
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 1500, 0.2)
 
     # Test Prediction:
-    predictions = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
+    y_pred, y_pred_proba = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
 
-    accuracy = Neural_Network().get_accuracy(predictions, y_test_NN)
+    accuracy = Neural_Network().get_accuracy(y_pred, y_test_NN)
 
     print(accuracy)
     # Export test and train Data
+
+    print(precision_score(y_pred, y_test_NN, average="macro"))
+    print(recall_score(y_pred, y_test_NN, average="macro"))
+    print(f1_score(y_pred, y_test_NN, average="macro"))
+
+    print(y_pred_proba)
+    y_pred_proba = y_pred_proba[1]
+    print(y_pred)
+    print(y_pred_proba)
+    print(y_test_NN)
+    print(1-sum(y_pred_proba)/len(y_pred_proba)) #Prob that the Whole Dataset is Negative
+    PrecisionRecallDisplay.from_predictions(y_test_NN, y_pred_proba, color="blue").plot()
+    RocCurveDisplay.from_predictions(y_test_NN, y_pred_proba, color="blue", )
+    plt.plot([0, 1], [0, 1], "k--", label="chance level (AUC = 0.5)")
+    plt.axis("square")
+    plt.show()
 '''
     #Model for test
     model = MultinomialNB()
