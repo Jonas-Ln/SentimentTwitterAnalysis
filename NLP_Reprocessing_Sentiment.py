@@ -96,7 +96,7 @@ class Neural_Network:
         y_trans = Y.T
         #encode_y = np.zeros((Y.size, Y.max()+1))
         #enocde_y[np.arange(Y.size),Y] = 1
-        dZ2 = A2 - y_trans
+        dZ2 = 2*(A2 - y_trans)
         dW2 = 1 / m * dZ2.dot(A1.T)
         db2 = 1 / m * np.sum(dZ2)
         dZ1 = W2.T.dot(dZ2) * self.derivative_ReLU(Z1)
@@ -111,25 +111,27 @@ class Neural_Network:
         return np.maximum(0, Z)
 
     def softmax(self, Z):
-        return np.exp(Z) / np.sum(np.exp(Z))
+        exp = np.exp(Z-np.max(Z))
+        return exp / exp.sum(axis=0)
 
     def initialize_parameters(self):
-        W1 = np.random.rand(2, 3000) - 0.5
-        b1 = np.random.rand(2, 1) - 0.5
-        W2 = np.random.rand(2, 2) - 0.5
+        W1 = np.random.rand(10, 100) - 0.5
+        b1 = np.random.rand(10, 1) - 0.5
+        W2 = np.random.rand(2, 10) - 0.5
         b2 = np.random.rand(2, 1) - 0.5
         #print(W1, b1, W2, b2)
         return W1, b1, W2, b2
 
     def update_parameters(self, W1, b1, W2, b2, dW1, db1, dW2, db2, alpha):
         W1 = W1 - alpha * dW1
-        b1 = b1 - alpha * db1
+        b1 = b1 - alpha * db1 #np.reshape(db1,(2,1))
         W2 = W2 - alpha * dW2
-        b2 = b2 - alpha * db2
+        b2 = b2 - alpha * db2 #np.reshape(db2,(2,1))
 
         return W1, b1, W2, b2
 
     def gradient_descent(self, X, Y, iterations, alpha):
+        size, m = X.shape
         W1, b1, W2, b2 = self.initialize_parameters()
         for i in range(iterations):
             Z1, A1, Z2, A2 = self.forward_propagation(W1, b1, W2, b2, X)
@@ -138,12 +140,12 @@ class Neural_Network:
             if i % 10 == 0:
                 print("Iteration: ", i)
                 print("Accuracy ", self.get_accuracy(self.get_prediction(A2), Y))
+                print("probability ", A2)
         return W1, b1, W2, b2
 
     def get_prediction(self, A2):
         return np.argmax(A2, 0)
-    def get_prediction_prob(self, A2):
-        return np.softmax(A2, 0)
+
 
     def get_accuracy(self, prediction, Y):
         print(prediction, Y)
@@ -168,7 +170,6 @@ def load_transform_df ():
     y = df.Sentiment.replace(4,1)
     # Split
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=0)
-
     return x_train, x_test, y_train, y_test
 
 def text_preprocessing(x):
@@ -199,7 +200,7 @@ def main():
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
     print(len(feature_extract))
-    most_used_words = list(feature_extract)[:3000]
+    most_used_words = list(feature_extract)[:100]
     #df_muw = pd.DataFrame(, columns= most_used_words)
 
 
@@ -213,7 +214,7 @@ def main():
     y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.1)
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.15)
 
     # Test Prediction:
     predictions = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
