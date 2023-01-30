@@ -117,7 +117,7 @@ class Neural_Network:
         return exp / exp.sum(axis=0)
 
     def initialize_parameters(self):
-        W1 = np.random.rand(10, 100) - 0.5
+        W1 = np.random.rand(10, 500) - 0.5
         b1 = np.random.rand(10, 1) - 0.5
         W2 = np.random.rand(2, 10) - 0.5
         b2 = np.random.rand(2, 1) - 0.5
@@ -166,11 +166,13 @@ def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
-    df1 = df[['Sentiment','text']]#.sample(n=5000, random_state=0)
-    df_neg = df1[df1['Sentiment']== 0].sample(n=50, random_state=0)
-    df_pos = df1[df1['Sentiment']== 4].sample(n=50, random_state=0)
-    df = pd.concat([df_pos, df_neg])
-    df = df.sample(frac=1)
+    df = df[['Sentiment','text']].sample(n=100000, random_state=0)
+
+# Wenn daten ungleich gebalanced evtl aufslpitten zu 50/50:
+    #df_neg = df[df['Sentiment']== 0].sample(n=50, random_state=0)
+    #df_pos = df[df['Sentiment']== 4].sample(n=50, random_state=0)
+    #df = pd.concat([df_pos, df_neg])
+    #df = df.sample(frac=1)
 
     # Change Sentiment 0 negative and 1 Positive
     x = df.text.values
@@ -207,7 +209,7 @@ def main():
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
     print(len(feature_extract))
-    most_used_words = list(feature_extract)[:100]
+    most_used_words = list(feature_extract)[:500]
     #df_muw = pd.DataFrame(, columns= most_used_words)
 
 
@@ -221,7 +223,7 @@ def main():
     y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100, 0.15)
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.1)
 
     # Test Prediction:
     predictions = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
