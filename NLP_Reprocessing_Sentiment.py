@@ -93,15 +93,17 @@ class Neural_Network:
 
     def back_propagation(self, Z1, A1, Z2, A2, W1, W2, X, Y):
         m = Y.size
-        y_trans = Y.T
+        #encode_y
+        one_h_endoding = np.zeros((Y.max()+1, m))
+        one_h_endoding[Y, np.arange(m)] = 1
         #encode_y = np.zeros((Y.size, Y.max()+1))
         #enocde_y[np.arange(Y.size),Y] = 1
-        dZ2 = 2*(A2 - y_trans)
+        dZ2 = 2*(A2 - one_h_endoding)
         dW2 = 1 / m * dZ2.dot(A1.T)
-        db2 = 1 / m * np.sum(dZ2)
+        db2 = 1 / m * np.sum(dZ2,1)
         dZ1 = W2.T.dot(dZ2) * self.derivative_ReLU(Z1)
         dW1 = 1 / m * dZ1.dot(X.T)
-        db1 = 1 / m * np.sum(dZ1)
+        db1 = 1 / m * np.sum(dZ1,1)
         return dW1, db1, dW2, db2
 
     def derivative_ReLU(self, Z):
@@ -124,9 +126,9 @@ class Neural_Network:
 
     def update_parameters(self, W1, b1, W2, b2, dW1, db1, dW2, db2, alpha):
         W1 = W1 - alpha * dW1
-        b1 = b1 - alpha * db1 #np.reshape(db1,(2,1))
+        b1 = b1 - alpha * np.reshape(db1,(10,1))
         W2 = W2 - alpha * dW2
-        b2 = b2 - alpha * db2 #np.reshape(db2,(2,1))
+        b2 = b2 - alpha * np.reshape(db2,(2,1))
 
         return W1, b1, W2, b2
 
@@ -164,7 +166,12 @@ def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
-    df = df[['Sentiment','text']].sample(n=10000, random_state=0)
+    df1 = df[['Sentiment','text']]#.sample(n=5000, random_state=0)
+    df_neg = df1[df1['Sentiment']== 0].sample(n=50, random_state=0)
+    df_pos = df1[df1['Sentiment']== 4].sample(n=50, random_state=0)
+    df = pd.concat([df_pos, df_neg])
+    df = df.sample(frac=1)
+
     # Change Sentiment 0 negative and 1 Positive
     x = df.text.values
     y = df.Sentiment.replace(4,1)
@@ -214,7 +221,7 @@ def main():
     y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100000, 0.15)
+    W1, b1, W2, b2 = Neural_Network().gradient_descent(x_train_NN, y_train_NN, 100, 0.15)
 
     # Test Prediction:
     predictions = Neural_Network().make_a_prediction(x_test_NN, W1, b1, W2, b2)
