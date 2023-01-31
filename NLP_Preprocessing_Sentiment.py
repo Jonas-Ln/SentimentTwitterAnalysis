@@ -47,9 +47,9 @@ lemma = WordNetLemmatizer()
 #Output Model & Fearues
 filename_Features = '/Word_Features.txt'
 
-filename_NN = '/Jonas_Neural_Net.sav'
+filename_NN = '/Jonas_Neural_Net.txt'
 
-filename_NB = '/NaiveBayes.sav'
+filename_NB = '/NaiveBayes.txt'
 
 # Load Data:
 DATA_PATH = cwd + '/Training_Data/training_1600000_processed_noemoticon.csv'
@@ -190,9 +190,19 @@ def main():
     plt.axis("square")
     plt.show()
 
-    W1, b1, W2, b2 save(filename_Features
+    #filename_Features
 
-    filename_NN
+    print(W1, b1, W2, b2)
+
+    if (os.path.exists(cwd + filename_NN)):
+        os.remove(cwd + filename_NN)
+    else:
+        print("File Does Not Exists")
+    f = open(cwd + filename_NN, "w")
+    f.write(W1 + '/t' + b1 + '/t' + W2 + '/t' + b2)
+    f.close()
+
+
 
 
 '''
