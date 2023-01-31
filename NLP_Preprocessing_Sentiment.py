@@ -105,7 +105,7 @@ def load_transform_df ():
     df = pd.read_csv(DATA_PATH,delimiter=',',encoding='ISO-8859-1')
 
     df.columns = ['Sentiment', 'id', 'date', 'query', 'user', 'text']
-    df = df[['Sentiment','text']].sample(n=5000, random_state=0)
+    df = df[['Sentiment','text']].sample(n=500000, random_state=0)
 
 # Wenn daten ungleich gebalanced evtl aufslpitten zu 50/50:
     #df_neg = df[df['Sentiment']== 0].sample(n=50, random_state=0)
@@ -142,7 +142,7 @@ def export_features(most_words,features):
 
 
 def main():
-    feature_size = 2000
+    feature_size = 3500
     x_train, x_test, y_train, y_test  = load_transform_df()
 
     x_train_new, y_train = feature_data(x_train, y_train)
@@ -165,7 +165,7 @@ def main():
     y_test_NN = np.array(y_test)
 
 
-    W1, b1, W2, b2 = Neural_Network(feature_size).gradient_descent(x_train_NN, y_train_NN, 1500, 0.2)
+    W1, b1, W2, b2 = Neural_Network(feature_size).gradient_descent(x_train_NN, y_train_NN, 2000, 0.2)
 
     # Test Prediction:
     y_pred, y_pred_proba = Neural_Network(feature_size).make_a_prediction(x_test_NN, W1, b1, W2, b2)
