@@ -192,23 +192,22 @@ def main():
     plt.show()
 
     #filename_Features
+    if (os.path.exists(cwd + filename_Features)): #filename_NN is global_V
+        os.remove(cwd + filename_Features)
+    else:
+        print("File Does Not Exists")
+    with open(cwd + filename_Features, "wb") as f:
+        pickle.dump(most_used_words,f)
 
-    print(W1, b1, W2, b2)
     dict_params= {'W1':W1, 'b1':b1, 'W2':W2, 'b2':b2}
-    if (os.path.exists(cwd + filename_NN)):
+    if (os.path.exists(cwd + filename_NN)): #filename_NN is global_V
         os.remove(cwd + filename_NN)
     else:
         print("File Does Not Exists")
     with open(cwd + filename_NN, "wb") as f:
         pickle.dump(dict_params,f)
 
-    with open(cwd + filename_NN, 'rb') as f:
-        load_params = pickle.load(f)
 
-    W1 = load_params.get('W1')
-    b1 = load_params.get('b1')
-    W2 = load_params.get('W2')
-    b2 = load_params.get('b2')
 
     print( W1, b1, W2, b2 )
 

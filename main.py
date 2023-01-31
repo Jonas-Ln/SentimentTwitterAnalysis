@@ -5,7 +5,15 @@
 import pandas as pd
 import snscrape.modules.twitter as twitter
 import os
+import pickle
+from Neural_Network import Neural_Network
 cwd = os.getcwd()
+
+filename_Features = '/Word_Features.txt'
+
+filename_NN = '/Jonas_Neural_Net.txt'
+
+filename_NB = '/NaiveBayes.txt'
 
 def main():
 
@@ -30,7 +38,21 @@ def main():
 
 
 
-def Classify_Tweet():
+def Classify_Tweet(x_test_NN):
+
+    with open(cwd + filename_Features, 'rb') as f: #filename_Features is global_V
+        load_features = pickle.load(f)
+
+    with open(cwd + filename_NN, 'rb') as f: #filename_NN is global_V
+        load_params = pickle.load(f)
+
+    W1 = load_params.get('W1')
+    b1 = load_params.get('b1')
+    W2 = load_params.get('W2')
+    b2 = load_params.get('b2')
+
+    Neural_Network(len(load_features)).make_a_prediction(x_test_NN, W1, b1, W2, b2)
+
     return
 
 
