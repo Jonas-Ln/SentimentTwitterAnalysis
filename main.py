@@ -2,6 +2,8 @@
 
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+import warnings
+
 import pandas as pd
 import numpy as np
 import snscrape.modules.twitter as twitter
@@ -93,7 +95,6 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
         proba = f'Die Tweets sind zu {(sum(y_pred_proba[1])/len(y_pred_proba[1]))*100} % Positiv'
 
     return y_pred, proba
-
 
 
 def get_inputs():

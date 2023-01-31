@@ -73,6 +73,7 @@ class NLP_Transformer:
         regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
+            print(1)
 
         return self.text.lower()
 
