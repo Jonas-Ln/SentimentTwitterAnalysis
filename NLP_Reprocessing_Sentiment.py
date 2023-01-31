@@ -32,10 +32,26 @@ import matplotlib.pyplot as plt
 from nltk.classify import NaiveBayesClassifier,accuracy
 from nltk.metrics.scores import (f_measure,precision,recall)
 import tqdm
+import os
+
+
+
+
 lemma = WordNetLemmatizer()
 
+cwd = os.getcwd()
+
+#Output Model & Fearues
+filename_Features = 'Word_Features.csv'
+
+filename_NN = 'Jonas_Neural_Net.sav'
+
+filename_NB = 'NaiveBayes.sav'
+
 # Load Data:
-DATA_PATH = '/Users/jonaslenz/pythonProject/SentimentTwitterAnalysis/Training_Data/training_1600000_processed_noemoticon.csv'
+DATA_PATH = cwd + '/training_1600000_processed_noemoticon.csv'
+
+
 
 # Text Preprocessing as Class
 # first option 1 Hot Embedding but too many Dimensions
@@ -271,6 +287,9 @@ def main():
     plt.axis("square")
     plt.show()
 '''
+
+
+
 
     #print(precision_recall_fscore_support(test_set, nb_classifier, average='weighted'))
 

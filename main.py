@@ -4,7 +4,8 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import pandas as pd
 import snscrape.modules.twitter as twitter
-
+import os
+cwd = os.getcwd()
 
 def main():
 
@@ -29,13 +30,18 @@ def main():
 
 
 
+def Classify_Tweet():
+    return
+
+
+
 def get_inputs():
     hashtag = []
 
     hashtag.append('#'+ input("Bitte Hashtag eingeben "))# Hier mehrere möglich da ein Thema N Hashtags haben kann
     origin = input("Hier einen bestimmten User eintragen: ")
     until = input("Ende des Zeitraums eingeben: ")
-    since = input("Beginn des Zeitraums eingeben: ")
+    since = input("Beginn des Zeitraums eingeben(YYYY-MM-DD): ")
 
     return hashtag,origin,until,since
 
