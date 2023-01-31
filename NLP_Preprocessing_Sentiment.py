@@ -35,6 +35,7 @@ import tqdm
 import os
 cwd = os.getcwd()
 import numpy as np
+import pickle
 from Neural_Network import Neural_Network
 #from .Neural_Network import Neural_Network
 
@@ -193,16 +194,23 @@ def main():
     #filename_Features
 
     print(W1, b1, W2, b2)
-
+    dict_params= {'W1':W1, 'b1':b1, 'W2':W2, 'b2':b2}
     if (os.path.exists(cwd + filename_NN)):
         os.remove(cwd + filename_NN)
     else:
         print("File Does Not Exists")
-    f = open(cwd + filename_NN, "w")
-    f.write(W1 + '/t' + b1 + '/t' + W2 + '/t' + b2)
-    f.close()
+    with open(cwd + filename_NN, "wb") as f:
+        pickle.dump(dict_params,f)
 
+    with open(cwd + filename_NN, 'rb') as f:
+        load_params = pickle.load(f)
 
+    W1 = load_params.get('W1')
+    b1 = load_params.get('b1')
+    W2 = load_params.get('W2')
+    b2 = load_params.get('b2')
+
+    print( W1, b1, W2, b2 )
 
 
 '''

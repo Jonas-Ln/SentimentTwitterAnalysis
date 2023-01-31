@@ -7,6 +7,8 @@
 
 *.rdb
 
+*.txt
+
 # Ignore Csv
 
 *.csv
