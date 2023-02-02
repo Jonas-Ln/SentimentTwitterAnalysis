@@ -108,6 +108,7 @@ def get_inputs():
 
     return hashtag,origin,until,since
 
+# For the word cloud in the Presentation
 def word_cloudy():
     with open(cwd + filename_Features, 'rb') as f: #filename_Features is global_V
         load_features = pickle.load(f)
@@ -131,4 +132,4 @@ def word_cloudy():
     plt.show()
 
 if __name__ == "__main__":
-    word_cloudy()
+    main()
