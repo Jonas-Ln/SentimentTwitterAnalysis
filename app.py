@@ -23,7 +23,8 @@ def streamlit_webpage():
 
     st.title("FOM - SentimentAnalysis on Twitter Data")
     st.markdown("Studienfach: Business Intelligence ")
-    st.markdowm("Dozent: Maurice Quirin")
+    st.markdown("Dozent: Maurice Quirin")
+    st.markdown("")
     st.markdown("MatrNr.: 605169 Name: Jonas Lenz", unsafe_allow_html=True)
 
     hashtag = []
