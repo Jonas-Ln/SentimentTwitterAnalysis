@@ -33,6 +33,7 @@ def streamlit_webpage():
     until = st.text_input("Ende des Zeitraums eingeben: ", 'YYYY-MM-DD')
     since = st.text_input("Beginn des Zeitraums eingeben: " ,'YYYY-MM-DD')
 
+    st.markdown("Wenn hier befüllt alle anderen Textfelder leeren. Dient nur zum Test")
     text_input = st.text_input("Hier Beispielhaft einen Text Klassifizieren: ",)
 
     query = ((f'{hashtag}' if hashtag != '' else f'')
