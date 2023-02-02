@@ -108,6 +108,27 @@ def get_inputs():
 
     return hashtag,origin,until,since
 
+def word_cloudy():
+    with open(cwd + filename_Features, 'rb') as f: #filename_Features is global_V
+        load_features = pickle.load(f)
+
+    result = ""
+    for i in range(100):
+        result = result + load_features[i-1] +" "
+        print(i)
+    print(result)
+    from wordcloud import WordCloud
+    import matplotlib.pyplot as plt
+    WordCloud()
+    wordcloud = WordCloud(width=2000,
+                          height=1000,
+                          background_color='#F2EDD7FF',
+                          max_words=100).generate(result)
+
+    plt.figure(figsize=(20, 30))
+    plt.imshow(wordcloud)
+    plt.title("Most Common Words")
+    plt.show()
 
 if __name__ == "__main__":
-    main()
+    word_cloudy()
