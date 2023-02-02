@@ -22,8 +22,7 @@ def streamlit_webpage():
     warnings.filterwarnings("ignore")
 
     st.title("FOM - SentimentAnalysis on Twitter Data")
-    st.markdown("Studienfach: Business Intelligence ")
-    st.markdown("Dozent: Maurice Quirin")
+    st.markdown("Studienfach: Business Intelligence             Dozent: Maurice Quirin")
     st.markdown("MatrNr.: 605169 Name: Jonas Lenz", unsafe_allow_html=True)
 
     hashtag = []
@@ -33,7 +32,7 @@ def streamlit_webpage():
     until = st.text_input("Ende des Zeitraums eingeben: ", 'YYYY-MM-DD')
     since = st.text_input("Beginn des Zeitraums eingeben: " ,'YYYY-MM-DD')
 
-    st.markdown("Wenn hier befüllt alle anderen Textfelder leeren. Dient nur zum Test")
+    st.markdown("Wenn hier befüllt alle anderen Textfelder leeren. Dient nur zum Test:")
     text_input = st.text_input("Hier Beispielhaft einen Text Klassifizieren: ",)
 
     query = ((f'{hashtag}' if hashtag != '' else f'')
