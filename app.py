@@ -41,7 +41,7 @@ def streamlit_webpage():
     result = ""
     if st.button("Click here to Predict the Sentiment of the filtered Tweets"):
         tweets= []
-        limit = 10000
+        limit = 1000
         for tweet in twitter.TwitterSearchScraper(query).get_items():
             if len(tweets) == limit:
                 break
@@ -68,8 +68,7 @@ def streamlit_webpage():
 
         st.balloons()
 
-    st.success(f'Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
-
+        st.success(f'{proba} / Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
 
 
 
@@ -103,9 +102,9 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     #Output string
     if sum(y_pred_proba[0])/len(y_pred_proba[0]) > 0.5:
-        proba = f'Die Tweets sind zu {(sum(y_pred_proba[0])/len(y_pred_proba[0]))*100}% Negativ'
+        proba = f'Die Tweets sind zu {round((sum(y_pred_proba[0])/len(y_pred_proba[0])),4)*100}% Negativ'
     if sum(y_pred_proba[1])/len(y_pred_proba[1])> 0.5:
-        proba = f'Die Tweets sind zu {(sum(y_pred_proba[1])/len(y_pred_proba[1]))*100} % Positiv'
+        proba = f'Die Tweets sind zu {round((sum(y_pred_proba[1])/len(y_pred_proba[1])),4)*100} % Positiv'
 
     return y_pred, proba
 
