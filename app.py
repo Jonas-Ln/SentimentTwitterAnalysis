@@ -71,12 +71,13 @@ def streamlit_webpage():
         feature_matrix_NN = np.array(feature_matrix).T
 
         #Classify with the Loaded Features
-        y_pred, proba, most_negative_tweet = Classify_Tweet(feature_matrix_NN,len(load_features))
+        y_pred, proba, most_negative_tweet, pred = Classify_Tweet(feature_matrix_NN,len(load_features))
 
         st.balloons()
 
         st.success(f'{proba} / Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
-        st.success(f'{tweets[most_negative_tweet[1][0]]}')
+        st.markdown('Negativster Tweet:')
+        st.success(f'{tweets[most_negative_tweet[1][0]]} Score: {pred}')
 
 
 def export_features(most_words,features):
@@ -116,7 +117,7 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     itemindex = np.where(y_pred_proba == max(y_pred_proba[0]))
 
-    return y_pred, proba, itemindex
+    return y_pred, proba, itemindex, max(y_pred_proba[0])
 
 if __name__ == "__main__":
     streamlit_webpage()
