@@ -116,7 +116,7 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     itemindex = np.where(y_pred_proba == max(y_pred_proba[0]))
 
-    return y_pred, proba, y_pred_proba[itemindex[0][1]][itemindex[1][0]]
+    return y_pred, proba, y_pred_proba[itemindex[0][0]][itemindex[0][0]]
 
 if __name__ == "__main__":
     streamlit_webpage()
