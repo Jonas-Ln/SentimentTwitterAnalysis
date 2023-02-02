@@ -1,6 +1,3 @@
-
-
-
 import pandas as pd
 import numpy as np
 import snscrape.modules.twitter as twitter
@@ -13,8 +10,6 @@ cwd = os.getcwd()
 filename_Features = '/Word_Features.txt'
 
 filename_NN = '/Jonas_Neural_Net.txt'
-
-filename_NB = '/NaiveBayes.txt'
 
 def streamlit_webpage():
     import streamlit as st
@@ -69,6 +64,7 @@ def streamlit_webpage():
         # For input into Neural Network model
         feature_matrix_NN = np.array(feature_matrix).T
 
+        #Classify with the Loaded Features
         y_pred, proba = Classify_Tweet(feature_matrix_NN,len(load_features))
 
         st.balloons()
@@ -103,6 +99,7 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
     W2 = load_params.get('W2')
     b2 = load_params.get('b2')
 
+    #Predict with the Model
     y_pred, y_pred_proba = Neural_Network(feature_length).make_a_prediction(classify_tweets_NN, W1, b1, W2, b2)
 
     #Output string
