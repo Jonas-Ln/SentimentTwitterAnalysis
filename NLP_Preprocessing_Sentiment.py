@@ -19,6 +19,7 @@ import pandas as pd
 import re
 import nltk
 nltk.download('punkt')
+nltk.download('wordnet')
 from autocorrect import Speller
 spell = Speller(lang='en')
 from nltk.tokenize import word_tokenize
