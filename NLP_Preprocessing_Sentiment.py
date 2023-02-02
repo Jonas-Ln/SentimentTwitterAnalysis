@@ -17,6 +17,8 @@
 
 import pandas as pd
 import re
+import nltk
+nltk.download('punkt')
 from autocorrect import Speller
 spell = Speller(lang='en')
 from nltk.tokenize import word_tokenize
@@ -29,6 +31,7 @@ import os
 cwd = os.getcwd()
 import numpy as np
 import pickle
+
 
 # Own Model
 from Neural_Network import Neural_Network
