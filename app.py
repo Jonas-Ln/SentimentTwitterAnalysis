@@ -114,7 +114,7 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
     if sum(y_pred_proba[1])/len(y_pred_proba[1])> 0.5:
         proba = f'Der Positive Tweet-Score beträgt: {round((sum(y_pred_proba[1])/len(y_pred_proba[1]))*100,2)} % Positiv'
 
-    return y_pred, proba, y_pred_proba[0].index(max(y_pred_proba[0]))
+    return y_pred, proba, y_pred_proba[0, max(y_pred_proba[0]]
 
 if __name__ == "__main__":
     streamlit_webpage()
