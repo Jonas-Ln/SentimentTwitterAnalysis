@@ -32,6 +32,7 @@ def streamlit_webpage():
     until = st.text_input("Ende des Zeitraums eingeben: ", 'YYYY-MM-DD')
     since = st.text_input("Beginn des Zeitraums eingeben: " ,'YYYY-MM-DD')
 
+    text_input = st.text_input("Hier Beispielhaft einen Text Klassifizieren: ",)
 
     query = ((f'{hashtag}' if hashtag != '' else f'')
                  + (f'(from:{origin})' if origin != '' else f'')
@@ -41,17 +42,21 @@ def streamlit_webpage():
     result = ""
     if st.button("Click here to Predict the Sentiment of the filtered Tweets"):
         tweets= []
-        limit = 1000
-        for tweet in twitter.TwitterSearchScraper(query).get_items():
-            if len(tweets) == limit:
-                break
-            else:
-                tweets.append([tweet.date, tweet.user.username, tweet.rawContent])
+        if text_input == '':
+            limit = 1000
+            for tweet in twitter.TwitterSearchScraper(query).get_items():
+                if len(tweets) == limit:
+                    break
+                else:
+                    tweets.append([tweet.date, tweet.user.username, tweet.rawContent])
 
-        df = pd.DataFrame(tweets, columns=['Date','User','Text'])
+            df = pd.DataFrame(tweets, columns=['Date','User','Text'])
 
-        #get text values from tweets and normalize them
-        tweets = df.Text.values
+            #get text values from tweets and normalize them
+            tweets = df.Text.values
+
+        else:
+            tweets.append(text_input)
 
         tweets_norm = [text_preprocessing(tweet) for tweet in tweets]
 
@@ -102,9 +107,9 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     #Output string
     if sum(y_pred_proba[0])/len(y_pred_proba[0]) > 0.5:
-        proba = f'Die Tweets sind zu {round((sum(y_pred_proba[0])/len(y_pred_proba[0])),4)*100}% Negativ'
+        proba = f'Der Negative Tweet-Score beträgt: {round((sum(y_pred_proba[0])/len(y_pred_proba[0]))*100,4)}% Negativ'
     if sum(y_pred_proba[1])/len(y_pred_proba[1])> 0.5:
-        proba = f'Die Tweets sind zu {round((sum(y_pred_proba[1])/len(y_pred_proba[1])),4)*100} % Positiv'
+        proba = f'Der Positive Tweet-Score beträgt: {round((sum(y_pred_proba[1])/len(y_pred_proba[1]))*100,4)} % Positiv'
 
     return y_pred, proba
 
