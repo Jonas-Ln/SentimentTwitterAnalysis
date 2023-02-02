@@ -38,7 +38,7 @@ lemma = WordNetLemmatizer()
 
 
 
-#Output Model & Fearues
+#Output Model & Features
 filename_Features = '/Word_Features.txt'
 
 filename_NN = '/Jonas_Neural_Net.txt'
