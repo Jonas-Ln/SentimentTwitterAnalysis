@@ -213,6 +213,10 @@ def main():
     with open(cwd + filename_NN, "wb") as f:
         pickle.dump(dict_params,f)
 
+############################################################################
+    # Took 48 Hours to Train this Neural Network with the above Parameter
+
+
 #Optional for Naivebayes Classifier:
 '''
     #Model for test
