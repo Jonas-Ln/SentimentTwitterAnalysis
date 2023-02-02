@@ -76,7 +76,7 @@ def streamlit_webpage():
         st.balloons()
 
         st.success(f'{proba} / Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
-        st.success(f'{tweets[most_negative_tweet,:]}')
+        st.success(f'{tweets.iloc[most_negative_tweet[0][0]]}')
 
 
 def export_features(most_words,features):
@@ -116,7 +116,7 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     itemindex = np.where(y_pred_proba == max(y_pred_proba[0]))
 
-    return y_pred, proba, y_pred_proba[itemindex[0][0]][itemindex[0][0]]
+    return y_pred, proba, itemindex#y_pred_proba[itemindex[0][0]][itemindex[0][0]]
 
 if __name__ == "__main__":
     streamlit_webpage()
