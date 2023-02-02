@@ -13,8 +13,8 @@
 # 4 - the query (lyx). If there is no query, then this value is NO_QUERY. --> Contains no Query
 # 5 - the user that tweeted
 # 6 - the text of the tweet
-
 # Format ISO-8859-1 ANSI delimiter ','
+
 import pandas as pd
 import re
 from autocorrect import Speller
@@ -29,6 +29,7 @@ import os
 cwd = os.getcwd()
 import numpy as np
 import pickle
+
 # Own Model
 from Neural_Network import Neural_Network
 
