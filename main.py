@@ -1,7 +1,7 @@
 # Made by Jonas Lenz
 
 # Testing Example for the app.py before Transforming it into the Streamlit APP
-# Way faster to get Tweets here for Professionals not using an UI ;)
+# Way faster to get Tweets here for Professionals not using a UI ;)
 
 
 
