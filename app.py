@@ -76,7 +76,7 @@ def streamlit_webpage():
         st.balloons()
 
         st.success(f'{proba} / Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
-        st.success(f'{tweets[most_negative_tweet]}')
+        st.success(f'{tweets[most_negative_tweet[1][0]]}')
 
 
 def export_features(most_words,features):
