@@ -1,8 +1,9 @@
-# This is a sample Python script.
+# Made by Jonas Lenz
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-import warnings
+# Testing Example for the app.py before Transforming it into the Streamlit APP
+# Way faster to get Tweets here for Professionals not using an UI ;)
+
+
 
 import pandas as pd
 import numpy as np

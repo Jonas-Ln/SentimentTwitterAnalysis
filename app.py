@@ -1,3 +1,5 @@
+# Made by Jonas Lenz
+
 import pandas as pd
 import numpy as np
 import snscrape.modules.twitter as twitter

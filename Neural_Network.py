@@ -1,3 +1,5 @@
+# Made by Jonas Lenz
+
 import numpy as np
 
 # Input of Training or Test Dataset as X and Labels as Y

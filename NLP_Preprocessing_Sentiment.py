@@ -1,3 +1,4 @@
+# Made by Jonas Lenz
 
 # Dataset Source: https://www.kaggle.com/datasets/abhi8923shriv/sentiment-analysis-dataset
 # Prelabeled Data of Tweets from Kaggle to Train the Model 1 Mio Rows
