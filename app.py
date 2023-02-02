@@ -107,9 +107,9 @@ def Classify_Tweet(classify_tweets_NN, feature_length):
 
     #Output string
     if sum(y_pred_proba[0])/len(y_pred_proba[0]) > 0.5:
-        proba = f'Der Negative Tweet-Score beträgt: {round((sum(y_pred_proba[0])/len(y_pred_proba[0]))*100,4)}% Negativ'
+        proba = f'Der Negative Tweet-Score beträgt: {round((sum(y_pred_proba[0])/len(y_pred_proba[0]))*100,2)}% Negativ'
     if sum(y_pred_proba[1])/len(y_pred_proba[1])> 0.5:
-        proba = f'Der Positive Tweet-Score beträgt: {round((sum(y_pred_proba[1])/len(y_pred_proba[1]))*100,4)} % Positiv'
+        proba = f'Der Positive Tweet-Score beträgt: {round((sum(y_pred_proba[1])/len(y_pred_proba[1]))*100,2)} % Positiv'
 
     return y_pred, proba
 
