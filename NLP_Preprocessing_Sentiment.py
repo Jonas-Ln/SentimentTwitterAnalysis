@@ -73,7 +73,6 @@ class NLP_Transformer:
         regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
-            print(1)
 
         return self.text.lower()
 
@@ -123,10 +122,10 @@ def load_transform_df ():
 
 def text_preprocessing(x):
     # NLP - Textnormalisierung
-        # Initialize as Class
-        # regex Sonderzeichen
+    # Initialize as Class
+    # regex Sonderzeichen
     text = NLP_Transformer(x).regex_replace_tweet()
-        # tokens aus text # Long word Autocorrect, Lemmatize
+    # tokens aus text # Long word Autocorrect, Lemmatize
     text = NLP_Transformer(text).word_to_stem()
     return text
 
@@ -145,12 +144,14 @@ def export_features(most_words,features):
 def main():
     feature_size = 3500
     x_train, x_test, y_train, y_test  = load_transform_df()
-
+    print('train')
     x_train_new, y_train = feature_data(x_train, y_train)
+    print('test')
     x_test_new, y_test = feature_data(x_test, y_test)
+    print('feature')
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
     #feature_extract = FreqDist(sum([word.split(' ') for word in x_train], []))
-
+    print('extract')
     most_used_words = list(feature_extract)[:feature_size]
     #df_muw = pd.DataFrame(, columns= most_used_words)
     feature_size = len(most_used_words)
@@ -175,7 +176,7 @@ def main():
 
     print(accuracy)
     # Export test and train Data
-
+    #Macro accounts for label imbalance
     print(precision_score(y_pred, y_test_NN, average="macro"))
     print(recall_score(y_pred, y_test_NN, average="macro"))
     print(f1_score(y_pred, y_test_NN, average="macro"))
