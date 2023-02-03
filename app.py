@@ -78,7 +78,7 @@ def streamlit_webpage():
         negativ = list(y_pred).count(0)
         positiv = list(y_pred).count(1)
 
-        st.success(f'{proba} / Positive Tweets: {positiv} / { (positiv/ (positiv + negativ)) * 100}% Negative Tweets: {list(y_pred).count(0)} / {(negativ / (positiv + negativ)) * 100}%')
+        st.success(f'{proba} / Positive Tweets: {positiv} / { round((positiv/ (positiv + negativ)) * 100,2)}% Negative Tweets: {list(y_pred).count(0)} / {round((negativ / (positiv + negativ)) * 100,2)}%')
         st.markdown('Negativster Tweet:')
         st.success(f'{tweets[most_negative_tweet[1][0]]} Score: {pred}')
 
