@@ -28,9 +28,9 @@ def streamlit_webpage():
     hashtag = []
 
     hashtag.append('#' + st.text_input("Bitte Hashtag eingeben: ", "#Python"))  # Hier mehrere möglich da ein Thema N Hashtags haben kann
-    origin = st.text_input("Hier einen bestimmten User eintragen: ", "Username")
-    until = st.text_input("Ende des Zeitraums eingeben: ", 'YYYY-MM-DD')
-    since = st.text_input("Beginn des Zeitraums eingeben: " ,'YYYY-MM-DD')
+    origin = st.text_input("Hier einen bestimmten User eintragen: ", )
+    until = st.text_input("Ende des Zeitraums eingeben: ", )
+    since = st.text_input("Beginn des Zeitraums eingeben: ", )
 
     st.markdown("Wenn hier befüllt alle anderen Textfelder leeren. Dient nur zum Test:")
     text_input = st.text_input("Hier Beispielhaft einen Text Klassifizieren: ",)
