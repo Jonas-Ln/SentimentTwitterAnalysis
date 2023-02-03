@@ -75,7 +75,10 @@ def streamlit_webpage():
 
         st.balloons()
 
-        st.success(f'{proba} / Positive Tweets: {list(y_pred).count(1)} Negative Tweets: {list(y_pred).count(0)}')
+        negativ = list(y_pred).count(0)
+        positiv = list(y_pred).count(1)
+
+        st.success(f'{proba} / Positive Tweets: {positiv} / { positiv / (positiv + negativ)}% Negative Tweets: {list(y_pred).count(0)} / {negativ / (positiv + negativ)}%')
         st.markdown('Negativster Tweet:')
         st.success(f'{tweets[most_negative_tweet[1][0]]} Score: {pred}')
 
