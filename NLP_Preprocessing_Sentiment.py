@@ -47,7 +47,6 @@ filename_Features = '/Word_Features.txt'
 
 filename_NN = '/Jonas_Neural_Net.txt'
 
-filename_NB = '/NaiveBayes.txt'
 
 # Load Data:
 DATA_PATH = cwd + '/Training_Data/training_1600000_processed_noemoticon.csv'
@@ -66,12 +65,17 @@ class NLP_Transformer:
         # 1-2 Regex Replace extra signs @ # etc.
         # 3-4 Remove Links
         # 5 remove numbers
-        # 6 + 7 remove Sonderzeichen except . ! ?
-        regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',r'http\S+',r'www. \S+',r'[0-9]',r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
+        # 6 + 7 + 8 remove Sonderzeichen except . ! ?
+
+        regex_list = [r'#[A-Za-z0-9_]+',r'@[A-Za-z0-9_]+',
+                      r'http\S+',r'www. \S+',
+                      r'[0-9]',
+                      r'/[^A-Za-z0-9\!\?\.]/',r"'",r'-']
         for regex in regex_list:
             self.text = re.sub(regex,'',self.text)
 
         return self.text.lower()
+
 
     def word_to_stem(self: str) -> str:
         # split into words
@@ -104,7 +108,7 @@ def load_transform_df ():
     # 500.000 Tweets Sampled for this Model
     df = df[['Sentiment','text']].sample(n=500000, random_state=0)
 
-    # Incase for a need Split the Data into a 50/50 Split:
+    # Incase if needed Split the Data into a 50/50 Split:
     #df_neg = df[df['Sentiment']== 0].sample(n=50, random_state=0)
     #df_pos = df[df['Sentiment']== 4].sample(n=50, random_state=0)
     #df = pd.concat([df_pos, df_neg])
@@ -159,9 +163,8 @@ def main():
     feature_extract = FreqDist(sum([word for word in x_train_new], []))
 
     most_used_words = list(feature_extract)[:feature_size]
-    #df_muw = pd.DataFrame(, columns= most_used_words)
+
     feature_size = len(most_used_words)
-    print(most_used_words)
 
     # Transform all Text from train and test data into Features from the TF-ID List
     x_train_feature = [(export_features(most_used_words, data)) for data in x_train_new]
