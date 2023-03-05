@@ -112,7 +112,14 @@ def get_inputs():
 def word_cloudy():
     with open(cwd + filename_Features, 'rb') as f: #filename_Features is global_V
         load_features = pickle.load(f)
+    print(load_features)
 
+    with open(cwd + filename_NN, 'rb') as f: #filename_Features is global_V
+        load = pickle.load(f)
+    print(load)
+
+
+    '''
     result = ""
     for i in range(100):
         result = result + load_features[i-1] +" "
@@ -130,6 +137,6 @@ def word_cloudy():
     plt.imshow(wordcloud)
     plt.title("Most Common Words")
     plt.show()
-
+'''
 if __name__ == "__main__":
-    main()
+    word_cloudy()

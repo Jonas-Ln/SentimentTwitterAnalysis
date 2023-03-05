@@ -188,7 +188,7 @@ def main():
 
     print(accuracy)
 
-    # All KPIs
+
     # Macro accounts for label imbalance
     # Precision
     print(precision_score(y_pred, y_test_NN, average="macro"))

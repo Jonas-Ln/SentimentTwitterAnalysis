@@ -23,13 +23,13 @@ class Neural_Network:
 
     def back_propagation(self, Z1, A1, A2, W2, X, Y):
         m = Y.size
-        # Y to the fitting dimension (Here alrdy partly done but for another Task might be helpful)
-        one_h_endoding = np.zeros((Y.max()+1, m))
-        one_h_endoding[Y, np.arange(m)] = 1
+
+        one_h_encoding = np.zeros((Y.max()+1, m))
+        one_h_encoding[Y, np.arange(m)] = 1
 
         # Propagate from the Output to the Input Layer to get the Initial Values
         # After Subtracting what the actual Outcome should be with (Y)
-        dZ2 = 2 * (A2 - one_h_endoding)
+        dZ2 = 2 * (A2 - one_h_encoding)
         dW2 = 1 / m * dZ2.dot(A1.T)
         db2 = 1 / m * np.sum(dZ2,1)
         dZ1 = W2.T.dot(dZ2) * self.derivative_ReLU(Z1)
@@ -41,7 +41,7 @@ class Neural_Network:
     def derivative_ReLU(self, Z):
         return Z > 0
 
-    # Against Vanishing Gradient
+    # Less Computational Cost
     def ReLU(self, Z):
         return np.maximum(0, Z)
 
@@ -90,7 +90,7 @@ class Neural_Network:
     def get_accuracy(self, prediction, Y):
         return np.sum(prediction == Y) / Y.size
 
-    # Get a prediction -> Ouptut: Absolute Value, Probability
+    # Get a prediction -> Output: Absolute Value, Probability
     def make_a_prediction(self, X, W1, b1, W2, b2):
         _,_,_, A2 = self.forward_propagation(W1,b1,W2,b2,X)
         predictions = self.get_prediction(A2)
